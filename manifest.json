@@ -14,7 +14,21 @@
       "md5": "fe3f14346c88859ed145f199bbe54f19",
       "bc_version": 1,
       "notes": "Blok baru: motor kiri/kanan bebas, dan deteksi garis per sensor (pilih kotak sensor). Update firmware & sambung web app lewat kabel USB. Tab Robot di web app untuk uji hardware dan pengaturan WiFi.",
-      "webui": "releases/webui/lf-blockly-0.19.0.html"
+      "webui": "releases/webui/lf-blockly-0.19.0.html",
+      "boot": {
+        "bootloader": {
+          "file": "releases/firmware/lf-advanced-0.19.0-bootloader.bin",
+          "offset": 0
+        },
+        "partitions": {
+          "file": "releases/firmware/lf-advanced-0.19.0-partitions.bin",
+          "offset": 32768
+        },
+        "boot_app0": {
+          "file": "releases/firmware/lf-advanced-0.19.0-boot_app0.bin",
+          "offset": 57344
+        }
+      }
     }
   ],
   "webui": {

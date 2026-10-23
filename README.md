@@ -12,7 +12,7 @@ Tayang di: https://ismarintan98.github.io/LF_ITS-Share/
 | `index.html` | Halaman utama. Bagian Unduhan dibuat otomatis dari `manifest.json` |
 | `flash.html` | Flasher USB darurat (ESP Web Tools), membaca `flash-manifest.json` |
 | `manifest.json` | Daftar versi: 5 firmware terakhir, web UI, APK. Format sesuai `docs/rencana_update_customer.md` di repo firmware; nanti dibaca juga oleh web app untuk "Versi baru tersedia" |
-| `flash-manifest.json` | Manifest ESP Web Tools (firmware terbaru, offset 0x10000, ESP32-S3) |
+| `flash-manifest.json` | Manifest ESP Web Tools (firmware terbaru: bootloader 0x0, partisi 0x8000, boot_app0 0xe000, app 0x10000; ESP32-S3) |
 | `releases/firmware/` | `lf-advanced-<versi>.bin` (maks 5) |
 | `releases/webui/` | `lf-blockly-<versi>.html` (dinamai mengikuti versi firmware) |
 | `releases/remote/` | `LF-Remote-<versi>.apk` |

@@ -22,6 +22,13 @@ SITE = Path(__file__).resolve().parent.parent
 MANIFEST = SITE / "manifest.json"
 FLASH_MANIFEST = SITE / "flash-manifest.json"
 APP_OFFSET = 0x10000  # app0 di tabel partisi ESP32 standar
+# Bagian lain yang ikut di-flash lewat USB (ESP32-S3): robot bekas Arduino IDE
+# bisa punya bootloader/tabel partisi lain, dan app saja tidak akan boot.
+BOOT_PARTS = [  # (kunci, offset, nama file di .pio/build/robot)
+    ("bootloader", 0x0, "bootloader.bin"),
+    ("partitions", 0x8000, "partitions.bin"),
+    ("boot_app0", 0xE000, None),  # dari paket framework, bukan folder build
+]
 
 
 def md5(p: Path) -> str:
@@ -57,6 +64,14 @@ def check_esp32s3_image(p: Path):
     chip_id = struct.unpack_from("<H", hdr, 12)[0]
     if chip_id != 9:  # ESP32-S3
         sys.exit(f"{p}: chip id {chip_id}, bukan ESP32-S3 (9)")
+
+
+def find_boot_app0() -> Path:
+    for base in (Path.home() / ".platformio/packages").glob("framework-arduinoespressif32*"):
+        p = base / "tools/partitions/boot_app0.bin"
+        if p.exists():
+            return p
+    sys.exit("boot_app0.bin tidak ditemukan di ~/.platformio/packages/framework-arduinoespressif32*")
 
 
 def default_notes(repo: Path, version: str) -> str:
@@ -109,11 +124,22 @@ def main():
         check_esp32s3_image(src)
         rel = f"releases/firmware/lf-advanced-{version}.bin"
         copy(src, SITE / rel)
+        boot = {}
+        for key, offset, name in BOOT_PARTS:
+            bsrc = repo / ".pio/build/robot" / name if name else find_boot_app0()
+            if not bsrc.exists():
+                sys.exit(f"{bsrc} tidak ada. Build dulu: pio run -e robot")
+            brel = f"releases/firmware/lf-advanced-{version}-{key}.bin"
+            copy(bsrc, SITE / brel)
+            boot[key] = {"file": brel, "offset": offset}
+        old = next((v for v in m["versions"] if v["version"] == version), {})
         entry = {
+            **old,
             "version": version, "date": today, "hw": ["A"],
             "file": rel, "size": (SITE / rel).stat().st_size, "md5": md5(SITE / rel),
             "bc_version": 1,
-            "notes": a.notes or default_notes(repo, version),
+            "notes": a.notes or old.get("notes") or default_notes(repo, version),
+            "boot": boot,
         }
         m["versions"] = [v for v in m["versions"] if v["version"] != version]
         m["versions"].insert(0, entry)
@@ -152,6 +178,8 @@ def main():
     # --- pangkas ke N versi, hapus file yang tak dirujuk ---
     m["versions"] = m["versions"][: a.keep]
     keep_files = {v["file"] for v in m["versions"]} | {v.get("webui") for v in m["versions"]}
+    for v in m["versions"]:
+        keep_files |= {b["file"] for b in v.get("boot", {}).values()}
     if m.get("webui"):
         keep_files.add(m["webui"]["file"])
     for d in ("releases/firmware", "releases/webui"):
@@ -166,11 +194,16 @@ def main():
     # --- manifest ESP Web Tools (jalur darurat lewat USB) ---
     if m["versions"]:
         latest = m["versions"][0]
+        boot = latest.get("boot", {})
+        parts = [{"path": b["file"], "offset": b["offset"]}
+                 for b in sorted(boot.values(), key=lambda b: b["offset"])]
+        if not parts:
+            print("  PERINGATAN: versi terbaru tanpa bootloader/partisi, flasher USB hanya menulis app")
+        parts.append({"path": latest["file"], "offset": APP_OFFSET})
         FLASH_MANIFEST.write_text(json.dumps({
             "name": m["name"], "version": latest["version"],
             "new_install_prompt_erase": False,
-            "builds": [{"chipFamily": "ESP32-S3",
-                        "parts": [{"path": latest["file"], "offset": APP_OFFSET}]}],
+            "builds": [{"chipFamily": "ESP32-S3", "parts": parts}],
         }, indent=2) + "\n", encoding="utf-8")
 
     print(f"manifest.json: latest {m['latest']}, {len(m['versions'])} versi firmware")
