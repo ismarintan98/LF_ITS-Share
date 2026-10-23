@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flasher USB | Line Follower ADVANCED</title>
+    <link rel="icon" type="image/svg+xml" href="assets/its-logo.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #111827; color: #d1d5db; }
+        esp-web-install-button button { background: #0ea5e9 !important; color: #fff; font-weight: 700; padding: 0.8rem 2rem; border-radius: 9999px; border: 0; font-size: 1rem; cursor: pointer; }
+        esp-web-install-button button:hover { background: #0284c7 !important; }
+        code.k { background: #1f2937; color: #7dd3fc; padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.9em; }
+    </style>
+    <script type="module" src="https://unpkg.com/esp-web-tools@10.0.1/dist/web/install-button.js?module"></script>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+    <header class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800/60">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 text-white hover:text-sky-400 transition-colors">
+                <img src="assets/its-logo.svg" alt="ITS" class="h-9 w-9">
+                <span class="text-xl font-bold">LF <span class="text-sky-400">ITS Robotics</span></span>
+            </a>
+            <a href="index.html#update" class="text-sm text-gray-300 hover:text-sky-400">← Kembali ke Cara Update</a>
+        </div>
+    </header>
+
+    <main class="flex-1 container mx-auto px-6 py-16 max-w-3xl">
+        <span class="bg-amber-500/15 text-amber-400 text-xs font-bold px-3 py-1 rounded-full">JALUR DARURAT</span>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-white mt-4 mb-3">Flasher USB</h1>
+        <p class="text-lg text-gray-300 mb-8">
+            Menulis firmware <span id="fw-version" class="text-white font-semibold">…</span> langsung ke robot lewat kabel USB dari browser.
+            Pakai halaman ini hanya bila robot <strong class="text-white">tidak bisa menyala normal</strong>, atau update lewat web app gagal terus.
+            Program siswa di slot robot tetap tersimpan.
+        </p>
+
+        <div class="bg-gray-800 rounded-xl p-8 shadow-lg mb-8">
+            <ol class="space-y-4 text-gray-300 mb-8">
+                <li class="flex gap-4"><span class="shrink-0 w-8 h-8 rounded-full bg-sky-500 text-white font-bold flex items-center justify-center">1</span><p>Buka halaman ini di <strong class="text-white">Chrome atau Edge</strong> di laptop (Windows, macOS, Linux). Firefox dan HP tidak mendukung.</p></li>
+                <li class="flex gap-4"><span class="shrink-0 w-8 h-8 rounded-full bg-sky-500 text-white font-bold flex items-center justify-center">2</span><p>Nyalakan robot, lalu colok kabel USB-C robot ke laptop. Tutup aplikasi lain yang memakai port serial.</p></li>
+                <li class="flex gap-4"><span class="shrink-0 w-8 h-8 rounded-full bg-sky-500 text-white font-bold flex items-center justify-center">3</span><p>Klik <strong class="text-white">Pasang Firmware</strong>, pilih port robot (biasanya bertuliskan <em>USB JTAG/serial</em> atau <em>Espressif</em>), lalu pilih <em>Install</em>. Jangan pilih "erase" agar program siswa tidak terhapus.</p></li>
+                <li class="flex gap-4"><span class="shrink-0 w-8 h-8 rounded-full bg-sky-500 text-white font-bold flex items-center justify-center">4</span><p>Tunggu sampai selesai (±1 menit), lalu cabut-colok kabel atau matikan-nyalakan robot.</p></li>
+            </ol>
+            <div class="flex flex-wrap items-center gap-4">
+                <esp-web-install-button manifest="flash-manifest.json">
+                    <button slot="activate">Pasang Firmware</button>
+                    <span slot="unsupported" class="text-amber-400 text-sm">Browser ini tidak mendukung Web Serial. Gunakan Chrome atau Edge di laptop.</span>
+                    <span slot="not-allowed" class="text-amber-400 text-sm">Halaman harus dibuka lewat HTTPS.</span>
+                </esp-web-install-button>
+                <a id="fw-link" href="#" class="text-sm text-sky-400 hover:underline">Unduh file .bin saja</a>
+            </div>
+        </div>
+
+        <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-6 text-sm text-gray-400 space-y-2">
+            <p><strong class="text-gray-200">Robot tidak muncul di daftar port?</strong> Tahan tombol <em>BOOT</em> di board sambil mencolok kabel, lalu lepas. Linux: pastikan pengguna Anda boleh membuka port serial (grup <code class="k">dialout</code> atau <code class="k">uucp</code>).</p>
+            <p><strong class="text-gray-200">Apa yang ditulis?</strong> Hanya bagian aplikasi firmware (alamat 0x10000). Bootloader, tabel partisi, pengaturan WiFi, kalibrasi, dan 5 slot program tidak disentuh.</p>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 py-6 text-center text-sm text-gray-500">© 2026 ITS Robotics · IARC</footer>
+
+    <script>
+        fetch('flash-manifest.json', { cache: 'no-cache' }).then(r => r.json()).then(m => {
+            document.getElementById('fw-version').textContent = m.version;
+            document.getElementById('fw-link').href = m.builds[0].parts[0].path;
+            document.getElementById('fw-link').setAttribute('download', '');
+        }).catch(() => { document.getElementById('fw-version').textContent = '-'; });
+    </script>
+</body>
+</html>

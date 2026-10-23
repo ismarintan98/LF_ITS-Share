@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Follower ADVANCED | ITS Robotics</title>
+    <meta name="description" content="Robot line follower 16 sensor dengan gripper, diprogram lewat blok dari browser. Unduh web app, firmware, dan aplikasi remote di sini.">
+    <link rel="icon" type="image/svg+xml" href="assets/its-logo.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #111827; color: #d1d5db; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .nav-link-active { color: #38bdf8; }
+        .hero-glow { background: radial-gradient(ellipse at 70% 40%, rgba(56,189,248,0.18), transparent 55%); }
+        #robot3d canvas { display: block; width: 100% !important; height: 100% !important; }
+        details > summary { list-style: none; cursor: pointer; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] .chev { transform: rotate(180deg); }
+        .step-num { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+        code.k { background: #1f2937; color: #7dd3fc; padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.9em; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-gray-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-gray-800/60">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#home" class="flex items-center gap-3 text-white hover:text-sky-400 transition-colors">
+                    <img src="assets/its-logo.svg" alt="ITS" class="h-9 w-9">
+                    <span class="text-xl font-bold leading-tight">LF <span class="text-sky-400">ITS Robotics</span></span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-7 text-sm font-medium">
+                    <a href="#fitur" class="nav-link text-gray-300 hover:text-sky-400 transition-colors">Fitur</a>
+                    <a href="#spesifikasi" class="nav-link text-gray-300 hover:text-sky-400 transition-colors">Spesifikasi</a>
+                    <a href="#unduhan" class="nav-link text-gray-300 hover:text-sky-400 transition-colors">Unduhan</a>
+                    <a href="#update" class="nav-link text-gray-300 hover:text-sky-400 transition-colors">Cara Update</a>
+                    <a href="#panduan" class="nav-link text-gray-300 hover:text-sky-400 transition-colors">Panduan</a>
+                    <a href="#kontak" class="nav-link text-gray-300 hover:text-sky-400 transition-colors">Kontak</a>
+                    <a href="#unduhan" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full transition-colors">Unduh</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white focus:outline-none" aria-label="Menu">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-800">
+            <a href="#fitur" class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800">Fitur</a>
+            <a href="#spesifikasi" class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800">Spesifikasi</a>
+            <a href="#unduhan" class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800">Unduhan</a>
+            <a href="#update" class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800">Cara Update</a>
+            <a href="#panduan" class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800">Panduan</a>
+            <a href="#kontak" class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800">Kontak</a>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- Hero -->
+        <section id="home" class="min-h-[90vh] flex items-center bg-gray-900 hero-glow">
+            <div class="container mx-auto px-6 py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="inline-flex items-center gap-2 bg-gray-800 text-sky-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 reveal">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Firmware terbaru <span id="hero-version" class="text-white">…</span>
+                        </div>
+                        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight reveal" style="transition-delay: 100ms;">
+                            Line Follower <span class="text-sky-400">ADVANCED</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-sky-400 mb-6 reveal" style="transition-delay: 200ms;">
+                            Robot line follower 16 sensor dengan gripper, diprogram lewat blok dari browser.
+                        </p>
+                        <p class="text-lg text-gray-300 max-w-xl mb-10 reveal" style="transition-delay: 300ms;">
+                            Peserta menyusun strategi lintasan dengan blok berbahasa Indonesia. Kontrol sensor, PID,
+                            dan motor sudah tertanam di firmware, jadi robot tetap kencang dan stabil. Tanpa install,
+                            tanpa compile, tanpa kabel.
+                        </p>
+                        <div class="flex flex-wrap gap-4 reveal" style="transition-delay: 400ms;">
+                            <a href="#unduhan" class="bg-sky-500 text-white font-bold py-3 px-8 rounded-full hover:bg-sky-600 transition-all duration-300 transform hover:scale-105">
+                                Unduh Web App &amp; Firmware
+                            </a>
+                            <a href="#fitur" class="border border-gray-600 text-gray-200 font-semibold py-3 px-8 rounded-full hover:border-sky-400 hover:text-sky-400 transition-colors">
+                                Lihat Fitur
+                            </a>
+                        </div>
+                    </div>
+                    <div class="relative reveal" style="transition-delay: 300ms;">
+                        <div id="robot3d" class="w-full aspect-square max-h-[520px] rounded-2xl bg-gray-800/60 border border-gray-700/60 shadow-2xl overflow-hidden flex items-center justify-center">
+                            <div id="robot3d-fallback" class="text-center p-8 text-gray-400">
+                                <svg class="w-20 h-20 mx-auto mb-4 text-sky-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16v10H4zM8 7V4h8v3M2 11h2m16 0h2M8 13.5h.01M16 13.5h.01"/></svg>
+                                <p class="text-sm">Memuat model 3D robot…</p>
+                            </div>
+                        </div>
+                        <p class="text-center text-xs text-gray-500 mt-3">Model 3D robot dari desain CAD. Seret untuk memutar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fitur -->
+        <section id="fitur" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Fitur Utama</h2>
+                    <p class="text-lg mt-2">Hardware lengkap untuk tier lanjutan, dengan alat belajar yang sama seperti tier Intermediate.</p>
+                    <div class="w-24 h-1 bg-sky-500 mx-auto mt-4 rounded"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5h7v6H4zM13 5h7v6h-7zM4 13h7v6H4zM13 13h7v6h-7z"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Pemrograman Blok</h3>
+                        <p class="text-gray-400 text-sm">Web app LF Blockly satu file, dibuka langsung di browser. Blok berbahasa Indonesia, mode Simpel dan Advanced, plus simulator lintasan.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal" style="transition-delay: 100ms;">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12c3-5 15-5 18 0M5 14.5h.01M8 13h.01M11 12.2h.01M13 12.2h.01M16 13h.01M19 14.5h.01"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">16 Sensor Garis</h3>
+                        <p class="text-gray-400 text-sm">Larik sensor melengkung dengan kalibrasi otomatis, deteksi persimpangan, dan blok baca garis per sensor.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal" style="transition-delay: 200ms;">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v7M8 10h8l2 5H6zM7 15l-2 5M17 15l2 5M9 21h6"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Gripper 2 Servo</h3>
+                        <p class="text-gray-400 text-sm">Servo angkat dan servo capit untuk misi ambil dan antar barang. Gerak landai dan kalibrasi per robot dari web app.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal" style="transition-delay: 300ms;">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path stroke-linecap="round" d="M12 12l3-5M12 4v2M20 12h-2M12 20v-2M4 12h2"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Encoder + IMU</h3>
+                        <p class="text-gray-400 text-sm">Blok "maju lurus X cm" dan "putar X derajat" dengan gyro. Kecepatan roda tertutup agar jalan lurus dan konsisten.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h6M14 8l6 4-6 4M9 9l3 3-3 3"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Sensor Jarak ToF</h3>
+                        <p class="text-gray-400 text-sm">Mendeteksi objek di depan robot. Blok pembanding jarak untuk berhenti, menghindar, atau mengambil barang.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal" style="transition-delay: 100ms;">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path stroke-linecap="round" d="M11 18.5h2"/><circle cx="12" cy="10" r="2.5"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Remote HP (Bluetooth)</h3>
+                        <p class="text-gray-400 text-sm">Aplikasi Android LF Remote: joystick, kendali gripper, tombol STOP, status baterai, dan model 3D yang mengikuti robot.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal" style="transition-delay: 200ms;">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path stroke-linecap="round" d="M7 9h6M7 12h10M9 21h6"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Layar OLED + 4 Tombol</h3>
+                        <p class="text-gray-400 text-sm">Menu ikon beranimasi, 5 slot program, kalibrasi, lihat sensor, uji hardware, dan program demo. Semuanya tanpa laptop.</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300 reveal" style="transition-delay: 300ms;">
+                        <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12.5a10 10 0 0114 0M8 15.5a6 6 0 018 0M12 19h.01M12 3v4M10 5l2-2 2 2"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">WiFi &amp; USB</h3>
+                        <p class="text-gray-400 text-sm">Sambung lewat hotspot robot, router kelas, atau kabel USB. Update firmware dari web app tanpa alat tambahan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spesifikasi -->
+        <section id="spesifikasi" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Spesifikasi</h2>
+                    <div class="w-24 h-1 bg-sky-500 mx-auto mt-4 rounded"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg reveal">
+                        <div class="px-6 py-4 border-b border-gray-700"><h3 class="font-bold text-white">Robot</h3></div>
+                        <table class="w-full text-sm">
+                            <tbody class="divide-y divide-gray-700/70">
+                                <tr><td class="px-6 py-3 text-gray-400 w-2/5">Mikrokontroler</td><td class="px-6 py-3 text-gray-200">ESP32-S3 dual-core, WiFi + Bluetooth LE, 16 MB flash</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Sensor garis</td><td class="px-6 py-3 text-gray-200">16 sensor inframerah, larik melengkung, LED iluminasi dapat diatur</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Penggerak</td><td class="px-6 py-3 text-gray-200">2 motor DC dengan driver daya besar BTS7970, encoder roda</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Orientasi</td><td class="px-6 py-3 text-gray-200">IMU GY-25 (yaw, pitch, roll)</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Sensor jarak</td><td class="px-6 py-3 text-gray-200">Time-of-Flight VL6180X</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Gripper</td><td class="px-6 py-3 text-gray-200">2 servo: angkat (naik/turun) dan capit (buka/tutup)</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Antarmuka</td><td class="px-6 py-3 text-gray-200">OLED 128×64, 4 tombol, buzzer, USB-C</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Daya</td><td class="px-6 py-3 text-gray-200">Baterai Li-ion 3S (10,5 – 12,6 V), peringatan baterai lemah, tombol daya latch</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg reveal" style="transition-delay: 150ms;">
+                        <div class="px-6 py-4 border-b border-gray-700"><h3 class="font-bold text-white">Software</h3></div>
+                        <table class="w-full text-sm">
+                            <tbody class="divide-y divide-gray-700/70">
+                                <tr><td class="px-6 py-3 text-gray-400 w-2/5">Pemrograman</td><td class="px-6 py-3 text-gray-200">Web app LF Blockly (Chrome, Edge, Firefox), tanpa install, bisa offline</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Simulator</td><td class="px-6 py-3 text-gray-200">Uji program di lintasan virtual sebelum dijalankan di robot</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Kontrol</td><td class="px-6 py-3 text-gray-200">Control loop 500 Hz di core terpisah; PID, kecepatan tertutup, gyro lurus</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Program</td><td class="px-6 py-3 text-gray-200">5 slot tersimpan di robot, checkpoint untuk mulai dari tengah lintasan</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Koneksi</td><td class="px-6 py-3 text-gray-200">WiFi hotspot / router (WebSocket) atau kabel USB (Chrome/Edge)</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Remote</td><td class="px-6 py-3 text-gray-200">Aplikasi Android LF Remote lewat Bluetooth LE</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Update</td><td class="px-6 py-3 text-gray-200">Firmware lewat web app (WiFi/USB); firmware lama tetap aman bila gagal</td></tr>
+                                <tr><td class="px-6 py-3 text-gray-400">Kompatibilitas</td><td class="px-6 py-3 text-gray-200">Program tier Intermediate tetap jalan di robot Advanced</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Unduhan -->
+        <section id="unduhan" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Unduhan</h2>
+                    <p class="text-lg mt-2">Semua file yang dibutuhkan untuk memakai dan memperbarui robot. Diperbarui <span id="dl-updated" class="text-white">…</span>.</p>
+                    <div class="w-24 h-1 bg-sky-500 mx-auto mt-4 rounded"></div>
+                </div>
+
+                <div id="dl-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 reveal">
+                    <div class="bg-gray-800 rounded-xl p-6 animate-pulse h-56"></div>
+                    <div class="bg-gray-800 rounded-xl p-6 animate-pulse h-56"></div>
+                    <div class="bg-gray-800 rounded-xl p-6 animate-pulse h-56"></div>
+                </div>
+
+                <div class="reveal">
+                    <h3 class="text-2xl font-bold text-white mb-6">Riwayat Versi Firmware</h3>
+                    <div id="dl-latest"></div>
+                    <details id="dl-older-wrap" class="mt-4 hidden">
+                        <summary class="flex items-center justify-between bg-gray-800 hover:bg-gray-750 rounded-xl px-6 py-4 text-white font-semibold">
+                            <span>Versi sebelumnya (<span id="dl-older-count">0</span>)</span>
+                            <svg class="chev w-5 h-5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </summary>
+                        <div id="dl-older" class="mt-3 space-y-3"></div>
+                    </details>
+                    <p id="dl-error" class="hidden text-amber-400 text-sm mt-4"></p>
+                    <p class="text-xs text-gray-500 mt-6">
+                        Web app di-build bersama firmware dan dinamai mengikuti versinya. Gunakan web app dengan versi yang sama atau lebih baru dari firmware robot.
+                        Daftar versi juga tersedia sebagai <a href="manifest.json" class="text-sky-400 hover:underline">manifest.json</a>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cara Update -->
+        <section id="update" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Cara Memperbarui Robot</h2>
+                    <p class="text-lg mt-2">Update bisa dilakukan sendiri oleh siswa atau guru, kurang dari satu menit.</p>
+                    <div class="w-24 h-1 bg-sky-500 mx-auto mt-4 rounded"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-xl p-8 shadow-lg reveal">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="bg-emerald-500/15 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">DISARANKAN</span>
+                            <h3 class="text-xl font-bold text-white">Lewat Web App (WiFi atau USB)</h3>
+                        </div>
+                        <ol class="space-y-5">
+                            <li class="flex gap-4"><span class="step-num shrink-0 w-8 h-8 rounded-full text-white font-bold flex items-center justify-center">1</span><p class="text-gray-300">Unduh <strong class="text-white">firmware robot</strong> (file <code class="k">.bin</code>) versi terbaru dari bagian Unduhan di atas.</p></li>
+                            <li class="flex gap-4"><span class="step-num shrink-0 w-8 h-8 rounded-full text-white font-bold flex items-center justify-center">2</span><p class="text-gray-300">Buka web app <code class="k">lf-blockly.html</code> di Chrome atau Edge, lalu <strong class="text-white">Sambungkan</strong> ke robot: pilih <em>WiFi</em> (hotspot robot atau router) atau <em>USB</em> (kabel ke laptop).</p></li>
+                            <li class="flex gap-4"><span class="step-num shrink-0 w-8 h-8 rounded-full text-white font-bold flex items-center justify-center">3</span><p class="text-gray-300">Klik tombol <strong class="text-white">Robot</strong> di header web app, buka tab <strong class="text-white">Update</strong>, pilih file <code class="k">.bin</code> yang baru diunduh, lalu mulai.</p></li>
+                            <li class="flex gap-4"><span class="step-num shrink-0 w-8 h-8 rounded-full text-white font-bold flex items-center justify-center">4</span><p class="text-gray-300">Tunggu sekitar 30 detik. Layar robot menampilkan progres, lalu robot restart sendiri dengan versi baru. <strong class="text-white">Jangan matikan robot</strong> selama proses.</p></li>
+                        </ol>
+                        <div class="mt-6 bg-gray-900/60 rounded-lg p-4 text-sm text-gray-400">
+                            Pastikan baterai robot cukup (di atas 11 V). Bila update gagal di tengah jalan, firmware lama tetap jalan; cukup ulangi.
+                            Program yang tersimpan di 5 slot robot tidak hilang saat update.
+                        </div>
+                    </div>
+                    <div class="space-y-8">
+                        <div class="bg-gray-800 rounded-xl p-8 shadow-lg reveal" style="transition-delay: 150ms;">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="bg-amber-500/15 text-amber-400 text-xs font-bold px-3 py-1 rounded-full">DARURAT</span>
+                                <h3 class="text-xl font-bold text-white">Flasher USB dari browser</h3>
+                            </div>
+                            <p class="text-gray-300 mb-4">Untuk robot yang <strong class="text-white">tidak bisa menyala normal</strong> atau layarnya diam. Colok kabel USB ke laptop, buka halaman flasher di Chrome/Edge, klik <em>Pasang</em>, dan pilih port robot.</p>
+                            <a href="flash.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2.5 px-5 rounded-full transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                Buka Flasher USB
+                            </a>
+                        </div>
+                        <div class="bg-gray-800 rounded-xl p-8 shadow-lg reveal" style="transition-delay: 250ms;">
+                            <h3 class="text-xl font-bold text-white mb-4">Web app &amp; aplikasi HP</h3>
+                            <ul class="space-y-3 text-gray-300 text-sm">
+                                <li class="flex gap-3"><span class="text-sky-400 mt-0.5">▸</span><span><strong class="text-white">Web app:</strong> unduh file <code class="k">lf-blockly-x.y.z.html</code> yang baru dan ganti file lama. Tidak perlu install apa pun; program blok Anda tersimpan di file proyek, bukan di web app.</span></li>
+                                <li class="flex gap-3"><span class="text-sky-400 mt-0.5">▸</span><span><strong class="text-white">LF Remote (Android):</strong> unduh APK baru lalu pasang di atas yang lama. Izinkan "sumber tidak dikenal" bila diminta.</span></li>
+                                <li class="flex gap-3"><span class="text-sky-400 mt-0.5">▸</span><span><strong class="text-white">iPhone:</strong> belum ada aplikasi iOS. Sementara pakai halaman web remote di browser Bluefy.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panduan singkat -->
+        <section id="panduan" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Panduan Singkat</h2>
+                    <p class="text-lg mt-2">Hal pertama yang perlu diketahui saat robot sampai di tangan Anda.</p>
+                    <div class="w-24 h-1 bg-sky-500 mx-auto mt-4 rounded"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg reveal">
+                        <h3 class="text-lg font-bold text-white mb-4">Menyambungkan</h3>
+                        <ol class="text-sm text-gray-300 space-y-2 list-decimal list-inside">
+                            <li>Nyalakan robot. Layar menampilkan nama <code class="k">LF-xxxx</code>.</li>
+                            <li>Sambungkan laptop ke WiFi <code class="k">LF-Robot-xxxx</code>, password <code class="k">robot1234</code>.</li>
+                            <li>Buka <code class="k">lf-blockly.html</code>, isi alamat <code class="k">192.168.4.1</code>, klik Sambungkan.</li>
+                            <li>Ingin robot ikut WiFi kelas? Atur dari tombol <strong class="text-white">Robot → WiFi</strong> di web app.</li>
+                        </ol>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg reveal" style="transition-delay: 100ms;">
+                        <h3 class="text-lg font-bold text-white mb-4">Tombol Robot</h3>
+                        <pre class="bg-gray-900 rounded-lg p-3 text-xs text-sky-200 mb-3 leading-relaxed">  [▲]   ┌──────────┐   [✓ OK]
+        │   OLED   │
+  [▼]   └──────────┘   [← kembali]</pre>
+                        <ul class="text-sm text-gray-300 space-y-2">
+                            <li><strong class="text-white">OK</strong> di layar Home = jalankan program aktif.</li>
+                            <li><strong class="text-white">Tombol apa pun</strong> saat robot bergerak = STOP.</li>
+                            <li>Tahan <strong class="text-white">kembali</strong> 3 detik = matikan robot.</li>
+                            <li>Tahan <strong class="text-white">▲</strong> saat menyalakan = Mode Remote (Bluetooth).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg reveal" style="transition-delay: 200ms;">
+                        <h3 class="text-lg font-bold text-white mb-4">Sebelum Lomba</h3>
+                        <ul class="text-sm text-gray-300 space-y-2">
+                            <li class="flex gap-2"><span class="text-emerald-400">✓</span><span><strong class="text-white">Kalibrasi sensor</strong> di lintasan yang akan dipakai (menu Kalibrasi, geser robot melintasi garis).</span></li>
+                            <li class="flex gap-2"><span class="text-emerald-400">✓</span><span>Coba program di <strong class="text-white">simulator</strong> dulu, lalu upload ke salah satu dari 5 slot.</span></li>
+                            <li class="flex gap-2"><span class="text-emerald-400">✓</span><span>Gunakan <strong class="text-white">checkpoint</strong> agar bisa mulai ulang dari tengah lintasan.</span></li>
+                            <li class="flex gap-2"><span class="text-emerald-400">✓</span><span>Baterai penuh (12,6 V). Robot berbunyi tiap menit bila baterai lemah.</span></li>
+                            <li class="flex gap-2"><span class="text-emerald-400">✓</span><span>Mode WiFi dan Mode Remote tidak bisa bersamaan; pilih lewat menu robot.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kontak -->
+        <section id="kontak" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-6 text-center">
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Hubungi Kami</h2>
+                    <div class="w-24 h-1 bg-sky-500 mx-auto mt-4 rounded"></div>
+                    <p class="text-lg mt-6 max-w-2xl mx-auto">Pertanyaan tentang robot, pelatihan, pemesanan, atau menemukan masalah setelah update? Kirim email dan sebutkan versi firmware robot Anda (menu <em>Info Robot</em>).</p>
+                    <a href="mailto:ismarintan@its.ac.id?subject=Line%20Follower%20ADVANCED" class="inline-block mt-8 bg-sky-500 text-white font-bold py-3 px-8 rounded-full hover:bg-sky-600 transition-all duration-300 transform hover:scale-105">
+                        ismarintan@its.ac.id
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-800 py-8">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <div class="flex items-center gap-3">
+                <img src="assets/its-logo.svg" alt="ITS" class="h-7 w-7 opacity-80">
+                <span>© 2026 ITS Robotics · Akademi Robotik-Teknonusa. Hak cipta dilindungi.</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#unduhan" class="hover:text-sky-400">Unduhan</a>
+                <a href="flash.html" class="hover:text-sky-400">Flasher USB</a>
+                <a href="manifest.json" class="hover:text-sky-400">manifest.json</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobile
+        const mb = document.getElementById('mobile-menu-button'), mm = document.getElementById('mobile-menu');
+        mb.addEventListener('click', () => mm.classList.toggle('hidden'));
+        mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mm.classList.add('hidden')));
+
+        // Animasi reveal
+        const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }), { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+        // Nav aktif
+        const sections = [...document.querySelectorAll('main section[id]')], links = [...document.querySelectorAll('.nav-link')];
+        const navIo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(l => l.classList.toggle('nav-link-active', l.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-40% 0px -55% 0px' });
+        sections.forEach(s => navIo.observe(s));
+
+        // Unduhan dari manifest.json
+        const fmtSize = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
+        const fmtDate = d => { try { return new Date(d + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return d; } };
+        const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const dlBtn = (href, label, primary = true) => `<a href="${esc(href)}" download class="inline-flex items-center justify-center gap-2 w-full ${primary ? 'bg-sky-500 hover:bg-sky-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-100'} font-semibold py-2.5 px-4 rounded-lg transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>${esc(label)}</a>`;
+        const card = (icon, title, desc, ver, date, size, href, label, badge) => `
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg flex flex-col">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center">${icon}</div>
+                    ${badge ? `<span class="bg-emerald-500/15 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-full">${esc(badge)}</span>` : ''}
+                </div>
+                <h3 class="text-lg font-bold text-white">${esc(title)}</h3>
+                <p class="text-gray-400 text-sm mt-1 mb-4 flex-1">${esc(desc)}</p>
+                <div class="text-xs text-gray-500 mb-3">Versi <span class="text-gray-200 font-semibold">${esc(ver)}</span> · ${esc(fmtDate(date))} · ${esc(fmtSize(size))}</div>
+                ${href ? dlBtn(href, label) : '<span class="text-sm text-gray-500">Belum tersedia</span>'}
+            </div>`;
+        const ICON_WEB = '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path stroke-linecap="round" d="M3 9h18M8 21h8"/></svg>';
+        const ICON_CHIP = '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path stroke-linecap="round" d="M9 2v3M12 2v3M15 2v3M9 19v3M12 19v3M15 19v3M2 9h3M2 12h3M2 15h3M19 9h3M19 12h3M19 15h3"/></svg>';
+        const ICON_PHONE = '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path stroke-linecap="round" d="M11 18.5h2"/></svg>';
+
+        const versionRow = (v, latest) => `
+            <div class="bg-gray-800 rounded-xl p-6 ${latest ? 'border border-sky-500/40' : ''}">
+                <div class="flex flex-wrap items-center gap-3 mb-3">
+                    <span class="text-xl font-bold text-white">Firmware ${esc(v.version)}</span>
+                    ${latest ? '<span class="bg-sky-500/15 text-sky-300 text-xs font-bold px-2.5 py-1 rounded-full">TERBARU · DISARANKAN</span>' : ''}
+                    <span class="text-sm text-gray-500">${esc(fmtDate(v.date))} · ${esc(fmtSize(v.size))}</span>
+                </div>
+                <p class="text-gray-300 mb-4">${esc(v.notes || 'Perbaikan dan penyempurnaan.')}</p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="${esc(v.file)}" download class="inline-flex items-center gap-2 ${latest ? 'bg-sky-500 hover:bg-sky-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-100'} font-semibold py-2 px-4 rounded-lg text-sm transition-colors">Firmware .bin</a>
+                    ${v.webui ? `<a href="${esc(v.webui)}" download class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-100 font-semibold py-2 px-4 rounded-lg text-sm transition-colors">Web app ${esc(v.version)}</a>` : ''}
+                    <span class="self-center text-xs text-gray-500 font-mono">MD5 ${esc(v.md5)}</span>
+                </div>
+            </div>`;
+
+        fetch('manifest.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(m => {
+            const latest = m.versions?.[0];
+            document.getElementById('hero-version').textContent = m.latest || '-';
+            document.getElementById('dl-updated').textContent = fmtDate(m.updated || latest?.date);
+            document.getElementById('dl-cards').innerHTML =
+                card(ICON_WEB, 'Web App LF Blockly', 'Satu file HTML: susun blok, simulasikan, sambungkan ke robot lewat WiFi atau USB, dan update firmware. Buka di Chrome/Edge.', m.webui?.version, m.webui?.date, m.webui?.size, m.webui?.file, 'Unduh lf-blockly.html', 'WAJIB') +
+                card(ICON_CHIP, 'Firmware Robot', 'Program yang berjalan di robot. Pasang lewat web app (tab Robot → Update) atau Flasher USB.', latest?.version, latest?.date, latest?.size, latest?.file, 'Unduh firmware .bin', 'TERBARU') +
+                card(ICON_PHONE, 'LF Remote (Android)', 'Kendali robot dari HP lewat Bluetooth: joystick, gripper, STOP, baterai, model 3D.', m.remote?.version, m.remote?.date, m.remote?.size, m.remote?.file, 'Unduh APK', 'APK');
+            if (latest) document.getElementById('dl-latest').innerHTML = versionRow(latest, true);
+            const older = (m.versions || []).slice(1);
+            if (older.length) {
+                document.getElementById('dl-older-wrap').classList.remove('hidden');
+                document.getElementById('dl-older-count').textContent = older.length;
+                document.getElementById('dl-older').innerHTML = older.map(v => versionRow(v, false)).join('');
+            }
+        }).catch(err => {
+            document.getElementById('dl-cards').innerHTML = '';
+            const e = document.getElementById('dl-error');
+            e.classList.remove('hidden');
+            e.textContent = 'Daftar unduhan tidak bisa dimuat (' + err.message + '). Muat ulang halaman, atau buka manifest.json langsung.';
+            document.getElementById('hero-version').textContent = '-';
+        });
+    </script>
+
+    <!-- Model 3D robot (three.js) -->
+    <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    } }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+        const host = document.getElementById('robot3d');
+        const fallback = document.getElementById('robot3d-fallback');
+        try {
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+            scene.add(new THREE.HemisphereLight(0xdbeafe, 0x1f2937, 1.4));
+            const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(3, 5, 4); scene.add(key);
+            const rim = new THREE.DirectionalLight(0x38bdf8, 1.2); rim.position.set(-4, 2, -3); scene.add(rim);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; controls.enablePan = false; controls.enableZoom = false;
+            controls.autoRotate = true; controls.autoRotateSpeed = 1.6;
+            controls.minPolarAngle = 0.6; controls.maxPolarAngle = 1.45;
+
+            const resize = () => { const w = host.clientWidth, h = host.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+            new ResizeObserver(resize).observe(host);
+
+            const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
+            loader.load('assets/robot.glb', gltf => {
+                const model = gltf.scene;
+                const box = new THREE.Box3().setFromObject(model);
+                const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
+                model.position.sub(center);
+                const s = 1.6 / Math.max(size.x, size.y, size.z);
+                model.scale.setScalar(s);
+                scene.add(model);
+                camera.position.set(1.9, 1.3, 2.2); controls.target.set(0, 0, 0); controls.update();
+                fallback.remove();
+                host.appendChild(renderer.domElement);
+                resize();
+                renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+            }, undefined, err => { console.warn('GLB gagal dimuat', err); fallback.querySelector('p').textContent = 'Model 3D tidak tersedia.'; });
+        } catch (e) {
+            console.warn('WebGL tidak tersedia', e);
+            fallback.querySelector('p').textContent = 'Browser tidak mendukung tampilan 3D.';
+        }
+    </script>
+</body>
+</html>

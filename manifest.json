@@ -1,0 +1,35 @@
+{
+  "product": "lf-advanced",
+  "name": "Line Follower ADVANCED",
+  "latest": "0.19.0",
+  "versions": [
+    {
+      "version": "0.19.0",
+      "date": "2026-10-24",
+      "hw": [
+        "A"
+      ],
+      "file": "releases/firmware/lf-advanced-0.19.0.bin",
+      "size": 1521120,
+      "md5": "fe3f14346c88859ed145f199bbe54f19",
+      "bc_version": 1,
+      "notes": "Blok baru: motor kiri/kanan bebas, dan deteksi garis per sensor (pilih kotak sensor). Update firmware & sambung web app lewat kabel USB. Tab Robot di web app untuk uji hardware dan pengaturan WiFi.",
+      "webui": "releases/webui/lf-blockly-0.19.0.html"
+    }
+  ],
+  "webui": {
+    "version": "0.19.0",
+    "date": "2026-10-24",
+    "file": "releases/webui/lf-blockly-0.19.0.html",
+    "size": 2645748,
+    "md5": "ca05ebf214cd4e6d6ac08e629283f1ce"
+  },
+  "remote": {
+    "version": "1.0",
+    "date": "2026-10-24",
+    "file": "releases/remote/LF-Remote-1.0.apk",
+    "size": 4368813,
+    "md5": "6260bb3123509ea38c7ed852972af9e8"
+  },
+  "updated": "2026-10-24"
+}
