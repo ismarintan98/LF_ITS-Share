@@ -9,7 +9,8 @@ flash-manifest.json (ESP Web Tools). Jalankan dari mana saja:
 
 Opsi:
     --repo PATH      repo firmware (default ~/Projects/LF-ITSRobotics)
-    --notes TEKS     catatan perubahan untuk siswa (default: subjek commit "Firmware X: ...")
+    --notes TEKS     catatan perubahan untuk siswa (default: subjek commit "Firmware X: ...");
+                     ulangi --notes untuk daftar poin
     --no-firmware    jangan rilis firmware (hanya web UI / APK)
     --no-webui       jangan rilis web UI
     --no-apk         jangan cek APK
@@ -86,6 +87,14 @@ def default_notes(repo: Path, version: str) -> str:
     return out[0].split(":", 1)[-1].strip().capitalize()
 
 
+def read_webui_app_version(repo: Path) -> str:
+    """Versi web app (web-ui/package.json), yang tampil di header web app."""
+    try:
+        return json.loads((repo / "web-ui/package.json").read_text(encoding="utf-8"))["version"]
+    except Exception:
+        return ""
+
+
 def load_manifest() -> dict:
     if MANIFEST.exists():
         return json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -103,7 +112,7 @@ def copy(src: Path, dst: Path):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--repo", default=os.path.expanduser("~/Projects/LF-ITSRobotics"))
-    ap.add_argument("--notes")
+    ap.add_argument("--notes", action="append", help="ulangi untuk beberapa poin")
     ap.add_argument("--no-firmware", action="store_true")
     ap.add_argument("--no-webui", action="store_true")
     ap.add_argument("--no-apk", action="store_true")
@@ -115,6 +124,8 @@ def main():
     today = datetime.date.today().isoformat()
     m = load_manifest()
     print(f"Firmware {version} dari {repo}")
+    # Satu --notes = teks biasa (format lama), beberapa = daftar poin.
+    notes = a.notes[0] if a.notes and len(a.notes) == 1 else a.notes
 
     # --- firmware ---
     if not a.no_firmware:
@@ -138,7 +149,7 @@ def main():
             "version": version, "date": today, "hw": ["A"],
             "file": rel, "size": (SITE / rel).stat().st_size, "md5": md5(SITE / rel),
             "bc_version": 1,
-            "notes": a.notes or old.get("notes") or default_notes(repo, version),
+            "notes": notes or old.get("notes") or default_notes(repo, version),
             "boot": boot,
         }
         m["versions"] = [v for v in m["versions"] if v["version"] != version]
@@ -152,11 +163,13 @@ def main():
             sys.exit(f"{src} tidak ada. Build dulu: cd web-ui && npm run build")
         rel = f"releases/webui/lf-blockly-{version}.html"
         copy(src, SITE / rel)
-        m["webui"] = {"version": version, "date": today, "file": rel,
+        app_version = read_webui_app_version(repo)
+        m["webui"] = {"version": version, "app_version": app_version, "date": today, "file": rel,
                       "size": (SITE / rel).stat().st_size, "md5": md5(SITE / rel)}
         for v in m["versions"]:
             if v["version"] == version:
                 v["webui"] = rel
+                v["webui_app_version"] = app_version
 
     # --- APK remote: hanya bila berubah ---
     if not a.no_apk:

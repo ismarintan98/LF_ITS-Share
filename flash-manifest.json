@@ -1,25 +1,25 @@
 {
   "name": "Line Follower ADVANCED",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "new_install_prompt_erase": false,
   "builds": [
     {
       "chipFamily": "ESP32-S3",
       "parts": [
         {
-          "path": "releases/firmware/lf-advanced-0.19.0-bootloader.bin",
+          "path": "releases/firmware/lf-advanced-0.20.0-bootloader.bin",
           "offset": 0
         },
         {
-          "path": "releases/firmware/lf-advanced-0.19.0-partitions.bin",
+          "path": "releases/firmware/lf-advanced-0.20.0-partitions.bin",
           "offset": 32768
         },
         {
-          "path": "releases/firmware/lf-advanced-0.19.0-boot_app0.bin",
+          "path": "releases/firmware/lf-advanced-0.20.0-boot_app0.bin",
           "offset": 57344
         },
         {
-          "path": "releases/firmware/lf-advanced-0.19.0.bin",
+          "path": "releases/firmware/lf-advanced-0.20.0.bin",
           "offset": 65536
         }
       ]

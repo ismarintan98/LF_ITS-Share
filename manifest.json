@@ -1,8 +1,43 @@
 {
   "product": "lf-advanced",
   "name": "Line Follower ADVANCED",
-  "latest": "0.19.0",
+  "latest": "0.20.0",
   "versions": [
+    {
+      "version": "0.20.0",
+      "date": "2026-10-25",
+      "hw": [
+        "A"
+      ],
+      "file": "releases/firmware/lf-advanced-0.20.0.bin",
+      "size": 1525840,
+      "md5": "8e311224e2e15eb709b1aca390d52701",
+      "bc_version": 1,
+      "notes": [
+        "Kategori blok baru Suara: bunyikan buzzer dengan pilihan bunyi (bip, bip panjang, bip bip, bip bip bip, sukses, gagal, sirene, meriah) sebagai penanda misi, misalnya saat barang terambil atau sampai tujuan. Robot tetap bergerak selama bunyi.",
+        "Blok nada Do sampai Do'' selama X ms untuk menyusun lagu sendiri, plus blok nyalakan / matikan buzzer. Mode Advanced: bunyi dengan frekuensi bebas (Hz), misalnya nada makin tinggi saat objek makin dekat.",
+        "Buzzer juga terdengar di simulator web app.",
+        "Setelan robot otomatis dimuat ke web app saat tersambung dan ikut diperbarui bila diubah dari menu robot. Suara dan kecerahan layar robot kini bisa diatur dari web app (Setelan robot).",
+        "Sambungan USB lebih andal setelah robot restart. Web app menampilkan nomor versinya di pojok kiri atas.",
+        "Penting: blok Suara diam bila setelan Suara robot = Mati. Program yang memakai blok Suara butuh firmware 0.20.0; firmware lama menolaknya."
+      ],
+      "boot": {
+        "bootloader": {
+          "file": "releases/firmware/lf-advanced-0.20.0-bootloader.bin",
+          "offset": 0
+        },
+        "partitions": {
+          "file": "releases/firmware/lf-advanced-0.20.0-partitions.bin",
+          "offset": 32768
+        },
+        "boot_app0": {
+          "file": "releases/firmware/lf-advanced-0.20.0-boot_app0.bin",
+          "offset": 57344
+        }
+      },
+      "webui": "releases/webui/lf-blockly-0.20.0.html",
+      "webui_app_version": "0.6.0"
+    },
     {
       "version": "0.19.0",
       "date": "2026-10-24",
@@ -32,11 +67,12 @@
     }
   ],
   "webui": {
-    "version": "0.19.0",
-    "date": "2026-10-24",
-    "file": "releases/webui/lf-blockly-0.19.0.html",
-    "size": 2645748,
-    "md5": "ca05ebf214cd4e6d6ac08e629283f1ce"
+    "version": "0.20.0",
+    "app_version": "0.6.0",
+    "date": "2026-10-25",
+    "file": "releases/webui/lf-blockly-0.20.0.html",
+    "size": 2651930,
+    "md5": "73fe4b7580642cd6dad0083baeec0837"
   },
   "remote": {
     "version": "1.0",
@@ -45,5 +81,5 @@
     "size": 4368813,
     "md5": "6260bb3123509ea38c7ed852972af9e8"
   },
-  "updated": "2026-10-24"
+  "updated": "2026-10-25"
 }

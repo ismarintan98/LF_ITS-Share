@@ -33,7 +33,7 @@ cd web-ui && npm run build && cd ..
 Lalu di repo ini:
 
 ```sh
-python3 tools/release.py --notes "Catatan untuk siswa, bahasa sederhana."
+python3 tools/release.py --notes "Catatan untuk siswa, bahasa sederhana." --notes "Poin kedua."
 git add -A && git commit -m "Rilis firmware 0.20.0" && git push
 ```
 
@@ -42,7 +42,10 @@ Skrip menyalin `.pio/build/robot/firmware.bin` → `releases/firmware/`,
 memeriksa header image ESP32-S3, menghitung MD5 + ukuran, menaruh versi baru di
 atas `manifest.json`, membuang versi ke-6 dan seterusnya (file ikut dihapus),
 dan menulis ulang `flash-manifest.json`. Tanpa `--notes`, catatan diambil dari
-subjek commit `Firmware <versi>: ...`. Opsi lain: `--no-firmware`, `--no-webui`,
+subjek commit `Firmware <versi>: ...`; `--notes` diulang = daftar poin di halaman.
+Versi web app (`web-ui/package.json`, yang tampil di header web app) dicatat
+sebagai `webui.app_version` / `webui_app_version` dan ditampilkan di samping
+tombol unduh. Versi lama tetap bisa diunduh di "Versi sebelumnya". Opsi lain: `--no-firmware`, `--no-webui`,
 `--no-apk`, `--keep N`, `--repo PATH`.
 
 Mengubah teks halaman: edit `index.html` langsung (Tailwind lewat CDN, tanpa
